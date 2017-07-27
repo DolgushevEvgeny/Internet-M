@@ -35,6 +35,7 @@ public class CatalogActivity extends AppCompatActivity implements OnAsyncTaskCom
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_catalog);
+        setTitle("Каталог");
 
         categoriesRV = (RecyclerView) findViewById(R.id.catalogRecyclerView);
         categoriesRV.setLayoutManager(new LinearLayoutManager(this));
