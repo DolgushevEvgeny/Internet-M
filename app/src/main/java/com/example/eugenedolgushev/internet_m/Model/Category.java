@@ -5,9 +5,9 @@ public class Category {
     private Integer categoryId;
     private String title;
     private String imageUrl;
-    private Integer subCategories;
-    private String name;
-    private String description;
+    private Integer hasSubcategories;
+    private String fullName;
+    private String categoryDescription;
 
     public Category() {}
 
@@ -16,9 +16,9 @@ public class Category {
         this.categoryId = categoryId;
         this.title = title;
         this.imageUrl = imageUrl;
-        this.subCategories = subCategories;
-        this.name = name;
-        this.description = description;
+        this.hasSubcategories = subCategories;
+        this.fullName = name;
+        this.categoryDescription = description;
     }
 
     public void setCategoryId(final Integer categoryId) {
@@ -44,26 +44,26 @@ public class Category {
     public String getImageUrl() { return this.imageUrl; }
 
     public void setSubCategories(final Integer subCategories) {
-        this.subCategories = subCategories;
+        this.hasSubcategories = subCategories;
     }
 
     public Integer getSubCategories() {
-        return this.subCategories;
+        return this.hasSubcategories;
     }
 
     public void setName(final String name) {
-        this.name = name;
+        this.fullName = name;
     }
 
     public String getName() {
-        return this.name;
+        return this.fullName;
     }
 
     public void setDescription(final String description) {
-        this.description = description;
+        this.categoryDescription = description;
     }
 
     public String getDescription() {
-        return this.description;
+        return this.categoryDescription;
     }
 }

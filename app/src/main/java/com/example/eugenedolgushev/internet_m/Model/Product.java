@@ -6,7 +6,7 @@ public class Product {
 
     private Integer productId;
     private String title;
-    private String description;
+    private String productDescription;
     private Integer price;
     private Integer rating;
     private String imageUrl;
@@ -18,7 +18,7 @@ public class Product {
            final Integer rating, final String imageUrl, final ArrayList<String> images) {
         this.productId = id;
         this.title = title;
-        this.description = description;
+        this.productDescription = description;
         this.price = price;
         this.rating = rating;
         this.imageUrl = imageUrl;
@@ -42,11 +42,11 @@ public class Product {
     }
 
     public void setDescription(final String description) {
-        this.description = description;
+        this.productDescription = description;
     }
 
     public String getDescription() {
-        return this.description;
+        return this.productDescription;
     }
 
     public void setPrice(final Integer price) {
