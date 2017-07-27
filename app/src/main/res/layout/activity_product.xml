@@ -2,10 +2,10 @@
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/catalog_activity"
+    android:id="@+id/product_activity"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.example.eugenedolgushev.internet_m.Activities.CatalogActivity">
+    tools:context="com.example.eugenedolgushev.internet_m.Activities.ProductActivity">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -13,7 +13,7 @@
         android:orientation="vertical">
 
         <android.support.v7.widget.RecyclerView
-            android:id="@+id/catalogRecyclerView"
+            android:id="@+id/product_recycler_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
         </android.support.v7.widget.RecyclerView>
