@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.View;
 
 import com.example.eugenedolgushev.internet_m.AsyncTask.OnAsyncTaskCompleted;
@@ -14,6 +13,8 @@ import com.example.eugenedolgushev.internet_m.CustomOnItemClickListener;
 import com.example.eugenedolgushev.internet_m.ListAdapters.CategoryAdapter;
 import com.example.eugenedolgushev.internet_m.Model.Category;
 import com.example.eugenedolgushev.internet_m.R;
+import com.google.gson.Gson;
+import com.loopj.android.http.RequestParams;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -52,7 +53,9 @@ public class CatalogActivity extends AppCompatActivity implements OnAsyncTaskCom
 
         //processResult();
         AsyncTask getCategories = new AsyncTask(this, this);
-        getCategories.executeAsyncTask(URL, "yx-1PU73oUj6gfk0hNyrNUwhWnmBRld7-SfKAU7Kg6Fpp43anR261KDiQ-MY4P2SRwH_cd4Py1OCY5jpPnY_Viyzja-s18njTLc0E7XcZFwwvi32zX-B91Sdwq1KeZ7m");
+        RequestParams params = new RequestParams();
+        params = requestParams(params, "appKey", "yx-1PU73oUj6gfk0hNyrNUwhWnmBRld7-SfKAU7Kg6Fpp43anR261KDiQ-MY4P2SRwH_cd4Py1OCY5jpPnY_Viyzja-s18njTLc0E7XcZFwwvi32zX-B91Sdwq1KeZ7m");
+        getCategories.executeAsyncTask(URL, params);
 
     }
 
@@ -60,13 +63,16 @@ public class CatalogActivity extends AppCompatActivity implements OnAsyncTaskCom
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
+        categories.clear();
         AsyncTask getCategories = new AsyncTask(this, this);
-        getCategories.executeAsyncTask(URL, "yx-1PU73oUj6gfk0hNyrNUwhWnmBRld7-SfKAU7Kg6Fpp43anR261KDiQ-MY4P2SRwH_cd4Py1OCY5jpPnY_Viyzja-s18njTLc0E7XcZFwwvi32zX-B91Sdwq1KeZ7m");
+        RequestParams params = new RequestParams();
+        params = requestParams(params, "appKey", "yx-1PU73oUj6gfk0hNyrNUwhWnmBRld7-SfKAU7Kg6Fpp43anR261KDiQ-MY4P2SRwH_cd4Py1OCY5jpPnY_Viyzja-s18njTLc0E7XcZFwwvi32zX-B91Sdwq1KeZ7m");
+        getCategories.executeAsyncTask(URL, params);
     }
 
     @Override
     public void taskCompleted(JSONObject result) {
-        JSONArray list;
+        Gson gson = new Gson();
         try {
             if (result.has("meta")) {
                 JSONObject meta = result.getJSONObject("meta");
@@ -76,30 +82,9 @@ public class CatalogActivity extends AppCompatActivity implements OnAsyncTaskCom
                         if (result.has("data")) {
                             JSONObject data = result.getJSONObject("data");
                             if (data.has("categories")) {
-                                list = data.getJSONArray("categories");
+                                JSONArray list = data.getJSONArray("categories");
                                 for (int i = 0; i < list.length(); ++i) {
-                                    Category category = new Category();
-                                    JSONObject recordJsonObj = list.getJSONObject(i);
-                                    if (recordJsonObj.has("categoryId")) {
-                                        category.setCategoryId(recordJsonObj.getInt("categoryId"));
-                                    }
-                                    if (recordJsonObj.has("title")) {
-                                        category.setTitle(recordJsonObj.getString("title"));
-                                    }
-                                    if (recordJsonObj.has("imageUrl")) {
-                                        category.setImageUrl(recordJsonObj.getString("imageUrl"));
-                                    }
-                                    if (recordJsonObj.has("hasSubcategories")) {
-                                        category.setSubCategories(recordJsonObj.getInt("hasSubcategories"));
-                                    }
-                                    if (recordJsonObj.has("fullName")) {
-                                        category.setName(recordJsonObj.getString("fullName"));
-                                    }
-                                    if (recordJsonObj.has("categoryDescription")) {
-                                        category.setDescription(recordJsonObj.getString("categoryDescription"));
-                                    }
-
-                                    categories.add(category);
+                                    categories.add(gson.fromJson(String.valueOf(list.getJSONObject(i)), Category.class));
                                 }
                             }
                         }
@@ -112,14 +97,13 @@ public class CatalogActivity extends AppCompatActivity implements OnAsyncTaskCom
 
         categoryAdapter.setList((ArrayList) categories);
         categoriesRV.setAdapter(categoryAdapter);
-        //categories = gson.fromJson(result, Category.class);
-        Log.i("Categories", "onSuccess: " + result);
     }
 
     private void processResult() {
+        Gson gson = new Gson();
+        JSONArray list;
         try {
             JSONObject result = new JSONObject(testValue);
-            JSONArray list;
             if (result.has("meta")) {
                 JSONObject meta = result.getJSONObject("meta");
                 if (meta.has("success")) {
@@ -130,28 +114,7 @@ public class CatalogActivity extends AppCompatActivity implements OnAsyncTaskCom
                             if (data.has("categories")) {
                                 list = data.getJSONArray("categories");
                                 for (int i = 0; i < list.length(); ++i) {
-                                    Category category = new Category();
-                                    JSONObject recordJsonObj = list.getJSONObject(i);
-                                    if (recordJsonObj.has("categoryId")) {
-                                        category.setCategoryId(recordJsonObj.getInt("categoryId"));
-                                    }
-                                    if (recordJsonObj.has("title")) {
-                                        category.setTitle(recordJsonObj.getString("title"));
-                                    }
-                                    if (recordJsonObj.has("imageUrl")) {
-                                        category.setImageUrl(recordJsonObj.getString("imageUrl"));
-                                    }
-                                    if (recordJsonObj.has("hasSubcategories")) {
-                                        category.setSubCategories(recordJsonObj.getInt("hasSubcategories"));
-                                    }
-                                    if (recordJsonObj.has("fullName")) {
-                                        category.setName(recordJsonObj.getString("fullName"));
-                                    }
-                                    if (recordJsonObj.has("categoryDescription")) {
-                                        category.setDescription(recordJsonObj.getString("categoryDescription"));
-                                    }
-
-                                    categories.add(category);
+                                    categories.add(gson.fromJson(String.valueOf(list.getJSONObject(i)), Category.class));
                                 }
                             }
                         }
@@ -159,10 +122,15 @@ public class CatalogActivity extends AppCompatActivity implements OnAsyncTaskCom
                 }
             }
         } catch (JSONException e) {
-
+            e.printStackTrace();
         }
 
         categoryAdapter.setList((ArrayList) categories);
         categoriesRV.setAdapter(categoryAdapter);
+    }
+
+    private RequestParams requestParams(RequestParams params, final String key, final String value) {
+        params.put(key, value);
+        return params;
     }
 }

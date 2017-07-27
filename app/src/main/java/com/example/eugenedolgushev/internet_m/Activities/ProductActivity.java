@@ -7,10 +7,14 @@ import android.support.v7.widget.RecyclerView;
 import android.view.MenuItem;
 import android.view.View;
 
+import com.example.eugenedolgushev.internet_m.AsyncTask.OnAsyncTaskCompleted;
+import com.example.eugenedolgushev.internet_m.AsyncTask.impl.AsyncTask;
 import com.example.eugenedolgushev.internet_m.CustomOnItemClickListener;
 import com.example.eugenedolgushev.internet_m.ListAdapters.ProductAdapter;
 import com.example.eugenedolgushev.internet_m.Model.Product;
 import com.example.eugenedolgushev.internet_m.R;
+import com.google.gson.Gson;
+import com.loopj.android.http.RequestParams;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -19,9 +23,9 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ProductActivity extends AppCompatActivity {
+public class ProductActivity extends AppCompatActivity implements OnAsyncTaskCompleted{
 
-    private static final String URL = "http://onlinestore.whitetigersoft.ru/api/common/category/list";
+    private static final String URL = "http://onlinestore.whitetigersoft.ru/api/common/product/list";
     private RecyclerView productsRV = null;
     private ProductAdapter productAdapter;
     private List<Product> products = new ArrayList<>();
@@ -48,7 +52,12 @@ public class ProductActivity extends AppCompatActivity {
         });
         productsRV.setAdapter(productAdapter);
 
-        processResult();
+        AsyncTask getProducts = new AsyncTask(this, this);
+        RequestParams params = new RequestParams();
+        params = requestParams(params, "appKey", "yx-1PU73oUj6gfk0hNyrNUwhWnmBRld7-SfKAU7Kg6Fpp43anR261KDiQ-MY4P2SRwH_cd4Py1OCY5jpPnY_Viyzja-s18njTLc0E7XcZFwwvi32zX-B91Sdwq1KeZ7m");
+        params = requestParams(params, "categoryId", categoryId.toString());
+        getProducts.executeAsyncTask(URL, params);
+        //processResult();
     }
 
     @Override
@@ -90,7 +99,7 @@ public class ProductActivity extends AppCompatActivity {
                                 }
                                 if (recordJsonObj.has("rating")) {
                                     Object obj = recordJsonObj.get("rating");
-                                    if (obj != null) {
+                                    if (obj.equals("null")) {
                                         product.setRating(recordJsonObj.getInt("rating"));
                                     }
                                 }
@@ -118,5 +127,36 @@ public class ProductActivity extends AppCompatActivity {
 
         productAdapter.setList((ArrayList) products);
         productsRV.setAdapter(productAdapter);
+    }
+
+    @Override
+    public void taskCompleted(JSONObject result) {
+        Gson gson = new Gson();
+        try {
+            if (result.has("meta")) {
+                JSONObject meta = result.getJSONObject("meta");
+                if (meta.has("success")) {
+                    boolean success = meta.getBoolean("success");
+                    if (success) {
+                        if (result.has("data")) {
+                            JSONArray list = result.getJSONArray("data");
+                            for (int i = 0; i < list.length(); ++i) {
+                                products.add(gson.fromJson(String.valueOf(list.getJSONObject(i)), Product.class));
+                            }
+                        }
+                    }
+                }
+            }
+        } catch(JSONException e) {
+            e.printStackTrace();
+        }
+
+        productAdapter.setList((ArrayList) products);
+        productsRV.setAdapter(productAdapter);
+    }
+
+    private RequestParams requestParams(RequestParams params, final String key, final String value) {
+        params.put(key, value);
+        return params;
     }
 }
