@@ -14,21 +14,18 @@ import cz.msebera.android.httpclient.Header;
 public class AsyncTask {
 
     private AsyncHttpClient asyncHttpClient;
-    private RequestParams requestParams;
 
     private Context context;
     private OnAsyncTaskCompleted asyncListener;
 
     public AsyncTask(Context context, OnAsyncTaskCompleted listener) {
         this.asyncHttpClient = new AsyncHttpClient();
-        this.requestParams = new RequestParams();
         this.context = context;
         this.asyncListener = listener;
     }
 
-    public void executeAsyncTask(String url, String queryParams) {
-        this.requestParams.put("appKey", queryParams);
-        this.asyncHttpClient.get(url, this.requestParams, new JsonHttpResponseHandler() {
+    public void executeAsyncTask(String url, RequestParams queryParams) {
+        this.asyncHttpClient.get(url, queryParams, new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                 super.onSuccess(statusCode, headers, response);
