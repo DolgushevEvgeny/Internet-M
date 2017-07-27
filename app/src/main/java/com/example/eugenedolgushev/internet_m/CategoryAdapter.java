@@ -10,14 +10,23 @@ import java.util.ArrayList;
 public class CategoryAdapter extends RecyclerView.Adapter<ViewHolder>{
 
     private ArrayList<Category> categories;
+    private CustomOnItemClickListener listener;
 
-    public CategoryAdapter(ArrayList<Category> categories) {
+    public CategoryAdapter(ArrayList<Category> categories, CustomOnItemClickListener listener) {
         this.categories = categories;
+        this.listener = listener;
     }
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.category_item, parent, false);
+        final ViewHolder mViewHolder = new ViewHolder(v);
+        v.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                listener.onItemClick(v, mViewHolder.getPosition());
+            }
+        });
 
         return new ViewHolder(v);
     }
@@ -31,6 +40,13 @@ public class CategoryAdapter extends RecyclerView.Adapter<ViewHolder>{
     @Override
     public int getItemCount() {
         return this.categories.size();
+    }
+
+    public Category getItem(int position) {
+        if (position >= 0 && position <= this.categories.size() - 1) {
+            return this.categories.get(position);
+        }
+        return null;
     }
 
     public void setList(ArrayList<Category> list) {
