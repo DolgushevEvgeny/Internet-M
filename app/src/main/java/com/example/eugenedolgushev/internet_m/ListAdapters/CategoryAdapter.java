@@ -29,7 +29,7 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryViewHolder>{
         view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                listener.onItemClick(v, mViewHolder.getPosition());
+                listener.onItemClick(v, mViewHolder.getLayoutPosition());
             }
         });
 

@@ -16,6 +16,11 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
+        debug {
+            buildConfigField("String", "BASIC_URL", "\"http://onlinestore.whitetigersoft.ru/api/\"")
+            buildConfigField("String", "APP_KEY", "\"yx-1PU73oUj6gfk0hNyrNUwhWnmBRld7-SfKAU7Kg6Fpp43anR261KDiQ-MY4P2SRwH_cd4Py1OCY5jpPnY_Viyzja-s18njTLc0E7XcZFwwvi32zX-B91Sdwq1KeZ7m\"")
+//            resValue("string", "basicUrl", "http://onlinestore.whitetigersoft.ru/api/")
+        }
     }
 }
 
@@ -32,5 +37,6 @@ dependencies {
     compile 'com.android.support:recyclerview-v7:23.4.0'
     compile 'com.loopj.android:android-async-http:1.4.9'
     compile 'com.android.support.constraint:constraint-layout:1.0.1'
+    compile 'com.android.support:design:23.4.0'
     testCompile 'junit:junit:4.12'
 }
