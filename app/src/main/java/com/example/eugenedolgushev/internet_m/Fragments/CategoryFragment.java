@@ -9,6 +9,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 
 import com.example.eugenedolgushev.internet_m.Api.CategoryApi.OnCategoryParsed;
 import com.example.eugenedolgushev.internet_m.Api.CategoryApi.impl.CategoryApiImpl;
@@ -34,6 +35,7 @@ public class CategoryFragment extends Fragment implements OnCategoryParsed {
     private Context context;
     private TransferData transferData;
     private CategoryApiImpl categoryApi;
+    private ProgressBar progressBar;
 
     public CategoryFragment() {}
 
@@ -61,6 +63,8 @@ public class CategoryFragment extends Fragment implements OnCategoryParsed {
 
         categoryApi = new CategoryApiImpl(context, this);
 
+        progressBar = (ProgressBar) getActivity().findViewById(R.id.progressBar);
+
         categoriesRV = (RecyclerView) getActivity().findViewById(R.id.catalogRecyclerView);
         categoriesRV.setLayoutManager(new LinearLayoutManager(context));
         categoryAdapter = new CategoryAdapter(categories, new CustomOnItemClickListener() {
@@ -75,8 +79,9 @@ public class CategoryFragment extends Fragment implements OnCategoryParsed {
             }
         });
         categoriesRV.setAdapter(categoryAdapter);
-        processResult();
-//        categoryApi.getCategories();
+//        processResult();
+        progressBar.setVisibility(ProgressBar.VISIBLE);
+        categoryApi.getCategories();
     }
 
     private void processResult() {
@@ -112,5 +117,6 @@ public class CategoryFragment extends Fragment implements OnCategoryParsed {
     public void setCategories(ArrayList<Category> categories) {
         categoryAdapter.setList(categories);
         categoriesRV.setAdapter(categoryAdapter);
+        progressBar.setVisibility(ProgressBar.GONE);
     }
 }

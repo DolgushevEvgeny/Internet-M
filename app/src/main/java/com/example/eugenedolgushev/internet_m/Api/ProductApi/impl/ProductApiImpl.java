@@ -48,7 +48,7 @@ public class ProductApiImpl extends BaseApi implements ProductApi, OnAsyncTaskCo
         JSONObject jsonObject = null;
         try {
             jsonObject = new JSONObject(testValue);
-            ArrayList<Product> products = ProductParser.parseProducts(jsonObject);
+            ArrayList<Product> products = ProductParser.parseProducts(result);
             if (products != null) {
                 onProductParsed.setProducts(products);
             }

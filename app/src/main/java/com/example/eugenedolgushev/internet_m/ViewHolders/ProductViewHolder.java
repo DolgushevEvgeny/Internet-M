@@ -25,14 +25,27 @@ public class ProductViewHolder extends RecyclerView.ViewHolder{
     }
 
     public void setProductName(final String productName) {
-        productNameView.setText(productName);
+        if (productName == null) {
+            productNameView.setText("empty");
+        } else {
+            productNameView.setText(productName);
+        }
     }
 
     public void setProductPrice(final Integer productPrice) {
-        productPriceView.setText(productPrice.toString());
+        if (productPrice == null) {
+            productPriceView.setText("empty");
+        } else {
+            productPriceView.setText(productPrice.toString());
+        }
     }
 
     public void setProductImage(final String imageUrl) {
-        productImageView.setImageUrl(imageUrl);
+        if (imageUrl == null) {
+            productImageView.setImageUrl("empty");
+        } else {
+            productImageView.setImageUrl(imageUrl);
+        }
+
     }
 }

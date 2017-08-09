@@ -84,15 +84,14 @@ public class MainActivity extends AppCompatActivity
             productFragment = new ProductFragment();
             productFragment.setContext(this);
             FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
-            fragmentTransaction.remove(categoryFragment);
-            fragmentTransaction.add(R.id.fragment_wrapper, productFragment, "productFragment");
+            fragmentTransaction.replace(R.id.fragment_wrapper, productFragment, "productFragment");
             fragmentTransaction.commit();
         } else if (id == R.id.categories) {
             categoryFragment = new CategoryFragment();
             categoryFragment.setContext(this);
             FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
-            fragmentTransaction.remove(productFragment);
-            fragmentTransaction.add(R.id.fragment_wrapper, categoryFragment, "categoryFragment");
+            fragmentTransaction.replace(R.id.fragment_wrapper, categoryFragment, "categoryFragment");
+//            fragmentTransaction.add(R.id.fragment_wrapper, categoryFragment, "categoryFragment");
             fragmentTransaction.commit();
         }
 
@@ -107,8 +106,7 @@ public class MainActivity extends AppCompatActivity
         productFragment.setContext(this);
         productFragment.setArguments(bundle);
         FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
-        fragmentTransaction.remove(categoryFragment);
-        fragmentTransaction.add(R.id.fragment_wrapper, productFragment, "productFragment");
+        fragmentTransaction.replace(R.id.fragment_wrapper, productFragment, "productFragment");
         fragmentTransaction.commit();
     }
 }
