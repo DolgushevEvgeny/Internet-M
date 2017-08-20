@@ -11,31 +11,28 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
 
-import com.example.eugenedolgushev.internet_m.Api.CategoryApi.OnCategoryParsed;
+import com.example.eugenedolgushev.internet_m.Api.CategoryApi.CategoryApiListener;
 import com.example.eugenedolgushev.internet_m.Api.CategoryApi.impl.CategoryApiImpl;
 import com.example.eugenedolgushev.internet_m.CustomOnItemClickListener;
+import com.example.eugenedolgushev.internet_m.EndlessScroll;
 import com.example.eugenedolgushev.internet_m.ListAdapters.CategoryAdapter;
 import com.example.eugenedolgushev.internet_m.Model.Category;
 import com.example.eugenedolgushev.internet_m.R;
-import com.google.gson.Gson;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
+import com.loopj.android.http.RequestParams;
 
 import java.util.ArrayList;
 
-public class CategoryFragment extends Fragment implements OnCategoryParsed {
+public class CategoryFragment extends Fragment {
 
-    private static final String URL = "http://onlinestore.whitetigersoft.ru/api/common/category/list";
     private RecyclerView categoriesRV = null;
     private CategoryAdapter categoryAdapter;
     private ArrayList<Category> categories = new ArrayList<Category>();
-    private static final String testValue = "{\"meta\":{\"success\":true,\"error\":\"\"},\"data\":{\"categories\":[{\"categoryId\":66,\"title\":\"Видеокарты\",\"imageUrl\":\"http://onlinestore.whitetigersoft.ru/uploads/category-icons/e6wJIGyFBUkH2hxc_ObC2RW9Rq-9Whys.jpg\",\"hasSubcategories\":0,\"fullName\":\"Видеокарты\",\"categoryDescription\":null},{\"categoryId\":70,\"title\":\"Оперативная память\",\"imageUrl\":null,\"hasSubcategories\":0,\"fullName\":\"Оперативная память\",\"categoryDescription\":null},{\"categoryId\":71,\"title\":\"Системный блок\",\"imageUrl\":null,\"hasSubcategories\":0,\"fullName\":\"Системный блок\",\"categoryDescription\":null},{\"categoryId\":72,\"title\":\"Мониторы\",\"imageUrl\":null,\"hasSubcategories\":0,\"fullName\":\"Мониторы\",\"categoryDescription\":null}]}}\n";
     private Context context;
     private TransferData transferData;
     private CategoryApiImpl categoryApi;
     private ProgressBar progressBar;
+    private LinearLayoutManager layoutManager;
+    private CategoryFragment that;
 
     public CategoryFragment() {}
 
@@ -58,20 +55,28 @@ public class CategoryFragment extends Fragment implements OnCategoryParsed {
 
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-
+        that = this;
         getActivity().setTitle("Каталог");
 
-        categoryApi = new CategoryApiImpl(context, this);
-
+        categoryApi = new CategoryApiImpl(context);
+        layoutManager = new LinearLayoutManager(context);
         progressBar = (ProgressBar) getActivity().findViewById(R.id.progressBar);
 
         categoriesRV = (RecyclerView) getActivity().findViewById(R.id.catalogRecyclerView);
+        categoriesRV.addOnScrollListener(new EndlessScroll(layoutManager) {
+            @Override
+            public void onLoadMore(int page, int totalItemsCount) {
+                RequestParams params  = new RequestParams();
+                params.put("offset", categoryAdapter.getItemCount());
+                getCategories(params);
+            }
+        });
         categoriesRV.setLayoutManager(new LinearLayoutManager(context));
         categoryAdapter = new CategoryAdapter(categories, new CustomOnItemClickListener() {
             @Override
             public void onItemClick(View v, int position) {
                 CategoryAdapter adapter = (CategoryAdapter) categoriesRV.getAdapter();
-                Category category = adapter.getItem(position + 1);
+                Category category = adapter.getItem(position);
                 Bundle bundle = new Bundle();
                 bundle.putInt("categoryId", category.getCategoryId());
                 bundle.putString("categoryTitle", category.getTitle());
@@ -79,44 +84,25 @@ public class CategoryFragment extends Fragment implements OnCategoryParsed {
             }
         });
         categoriesRV.setAdapter(categoryAdapter);
-//        processResult();
         progressBar.setVisibility(ProgressBar.VISIBLE);
-        categoryApi.getCategories();
+
+        RequestParams params  = new RequestParams();
+        params.put("offset", categoryAdapter.getItemCount());
+        getCategories(params);
     }
 
-    private void processResult() {
-        Gson gson = new Gson();
-        try {
-            JSONObject result = new JSONObject(testValue);
-            if (result.has("meta")) {
-                JSONObject meta = result.getJSONObject("meta");
-                if (meta.has("success")) {
-                    boolean success = meta.getBoolean("success");
-                    if (success) {
-                        if (result.has("data")) {
-                            JSONObject data = result.getJSONObject("data");
-                            if (data.has("categories")) {
-                                JSONArray list = data.getJSONArray("categories");
-                                for (int i = 0; i < list.length(); ++i) {
-                                    categories.add(gson.fromJson(String.valueOf(list.getJSONObject(i)), Category.class));
-                                }
-                            }
-                        }
-                    }
-                }
+    private void getCategories(final RequestParams params) {
+        categoryApi.getCategories(params, new CategoryApiListener() {
+            @Override
+            public void onCategoriesLoaded(ArrayList<Category> categories) {
+                that.onCategoriesLoaded(categories);
             }
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-        categoryAdapter.setList(categories);
-        categoriesRV.setAdapter(categoryAdapter);
+        });
     }
 
-    @Override
-    public void setCategories(ArrayList<Category> categories) {
+    public void onCategoriesLoaded(ArrayList<Category> categories) {
         categoryAdapter.setList(categories);
-        categoriesRV.setAdapter(categoryAdapter);
+        categoriesRV.swapAdapter(categoryAdapter, false);
         progressBar.setVisibility(ProgressBar.GONE);
     }
 }
