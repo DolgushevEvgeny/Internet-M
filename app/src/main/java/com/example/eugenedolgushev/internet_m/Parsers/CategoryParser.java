@@ -11,24 +11,19 @@ import java.util.ArrayList;
 
 public class CategoryParser {
 
-    public static ArrayList<Category> parseCategories(JSONObject result) {
-        result = BasicParser.parse(result);
+    public static ArrayList<Category> parseCategories(JSONArray list) {
         ArrayList<Category> categories = new ArrayList<>();
-        if (result != null) {
-            Gson gson = new Gson();
+        Gson gson = new Gson();
+        for (int i = 0; i < list.length(); ++i) {
+            JSONObject object = null;
             try {
-                JSONObject data = result.getJSONObject("data");
-                if (data.has("categories")) {
-                    JSONArray list = data.getJSONArray("categories");
-                    for (int i = 0; i < list.length(); ++i) {
-                        categories.add(gson.fromJson(String.valueOf(list.getJSONObject(i)), Category.class));
-                    }
-                    return categories;
-                }
+                object = list.getJSONObject(i);
+                Category parsedObject = gson.fromJson(String.valueOf(object), Category.class);
+                categories.add(parsedObject);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
         }
-        return null;
+        return categories;
     }
 }

@@ -56,7 +56,7 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductViewHolder> {
     }
 
     public void setList(ArrayList<Product> list) {
-        products = list;
+        products.addAll(list);
         notifyDataSetChanged();
     }
 }

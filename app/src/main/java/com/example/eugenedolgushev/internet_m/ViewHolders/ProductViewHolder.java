@@ -5,6 +5,7 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.example.eugenedolgushev.internet_m.R;
 import com.loopj.android.image.SmartImageView;
 
@@ -36,7 +37,7 @@ public class ProductViewHolder extends RecyclerView.ViewHolder{
         if (productPrice == null) {
             productPriceView.setText("empty");
         } else {
-            productPriceView.setText(productPrice.toString());
+            productPriceView.setText(String.valueOf(productPrice));
         }
     }
 
@@ -44,7 +45,12 @@ public class ProductViewHolder extends RecyclerView.ViewHolder{
         if (imageUrl == null) {
             productImageView.setImageUrl("empty");
         } else {
-            productImageView.setImageUrl(imageUrl);
+            Glide.with(productWrapper.getContext())
+                .load(imageUrl)
+                .placeholder(R.mipmap.ic_launcher)
+                .error(R.mipmap.ic_launcher)
+                .into(productImageView);
+//            productImageView.setImageUrl(imageUrl);
         }
 
     }

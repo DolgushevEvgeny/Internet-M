@@ -11,21 +11,19 @@ import java.util.ArrayList;
 
 public class ProductParser {
 
-    public static ArrayList<Product> parseProducts(JSONObject result) {
-        result = BasicParser.parse(result);
+    public static ArrayList<Product> parseProducts(JSONArray list) {
         ArrayList<Product> products = new ArrayList<>();
-        if (result != null) {
-            Gson gson = new Gson();
+        Gson gson = new Gson();
+        for (int i = 0; i < list.length(); ++i) {
+            JSONObject object = null;
             try {
-                JSONArray list = result.getJSONArray("data");
-                for (int i = 0; i < list.length(); ++i) {
-                    products.add(gson.fromJson(String.valueOf(list.getJSONObject(i)), Product.class));
-                }
-                return products;
-            } catch (JSONException e) {
+                object = list.getJSONObject(i);
+                Product parsedObject = gson.fromJson(String.valueOf(object), Product.class);
+                products.add(parsedObject);
+            } catch(JSONException e) {
                 e.printStackTrace();
             }
         }
-        return null;
+        return products;
     }
 }
