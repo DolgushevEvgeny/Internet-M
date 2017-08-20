@@ -6,6 +6,7 @@ import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import cz.msebera.android.httpclient.Header;
@@ -13,28 +14,28 @@ import cz.msebera.android.httpclient.Header;
 public class BaseApi {
 
     private AsyncHttpClient asyncHttpClient;
-    private OnAsyncTaskCompleted asyncListener;
     private static final String BASIC_URL = BuildConfig.BASIC_URL;
 
     public BaseApi() {
         this.asyncHttpClient = new AsyncHttpClient();
     }
 
-    public void setAsyncListener(OnAsyncTaskCompleted listener) {
-        this.asyncListener = listener;
-    }
+//    public void get(String url) {
+//        get(url, new RequestParams());
+//    }
 
-    public void get(String url) {
-        get(url, new RequestParams());
-    }
-
-    public void get(String url, RequestParams queryParams) {
+    protected void get(final String url, RequestParams queryParams, final OnAsyncTaskCompleted asyncListener) {
         queryParams = requestParams(queryParams, "appKey", "yx-1PU73oUj6gfk0hNyrNUwhWnmBRld7-SfKAU7Kg6Fpp43anR261KDiQ-MY4P2SRwH_cd4Py1OCY5jpPnY_Viyzja-s18njTLc0E7XcZFwwvi32zX-B91Sdwq1KeZ7m");
         this.asyncHttpClient.get(BASIC_URL + url, queryParams, new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                 super.onSuccess(statusCode, headers, response);
-                asyncListener.taskCompleted(response);
+                try {
+                    Object data = response.get("data");
+                    asyncListener.taskCompleted(data);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
             }
 
             @Override
@@ -45,7 +46,8 @@ public class BaseApi {
         });
     }
 
-    public void post(String url, RequestParams queryParams) {
+    public void post(final String url, RequestParams queryParams, final OnAsyncTaskCompleted asyncListener) {
+        queryParams = requestParams(queryParams, "appKey", "yx-1PU73oUj6gfk0hNyrNUwhWnmBRld7-SfKAU7Kg6Fpp43anR261KDiQ-MY4P2SRwH_cd4Py1OCY5jpPnY_Viyzja-s18njTLc0E7XcZFwwvi32zX-B91Sdwq1KeZ7m");
         this.asyncHttpClient.post(BASIC_URL + url, queryParams, new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
@@ -60,7 +62,7 @@ public class BaseApi {
         });
     }
 
-    protected RequestParams requestParams(RequestParams params, final String key, final String value) {
+    protected RequestParams requestParams(RequestParams params, final String key, final String value) { // TODO: 15.08.2017 rename to prepareParams(params)
         params.put(key, value);
         return params;
     }
