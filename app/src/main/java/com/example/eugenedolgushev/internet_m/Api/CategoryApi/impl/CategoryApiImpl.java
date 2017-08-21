@@ -6,7 +6,7 @@ import com.example.eugenedolgushev.internet_m.Api.BaseApi;
 import com.example.eugenedolgushev.internet_m.Api.CategoryApi.CategoryApiListener;
 import com.example.eugenedolgushev.internet_m.AsyncTask.OnAsyncTaskCompleted;
 import com.example.eugenedolgushev.internet_m.Model.Category;
-import com.example.eugenedolgushev.internet_m.Parsers.CategoryParser;
+import com.example.eugenedolgushev.internet_m.Parsers.Parser;
 import com.loopj.android.http.RequestParams;
 
 import org.json.JSONArray;
@@ -30,10 +30,9 @@ public class CategoryApiImpl extends BaseApi {
             @Override
             public void taskCompleted(Object data) {
                 JSONObject object = (JSONObject)data;
-                JSONArray categoriesArray = null;
                 try {
-                    categoriesArray = object.getJSONArray("categories");
-                    ArrayList<Category> categories = CategoryParser.parseCategories(categoriesArray);
+                    JSONArray categoriesArray = object.getJSONArray("categories");
+                    ArrayList<Category> categories = Parser.parseObjects(categoriesArray, Category.class);
                     if (categories != null) {
                         listener.onCategoriesLoaded(categories);
                     }

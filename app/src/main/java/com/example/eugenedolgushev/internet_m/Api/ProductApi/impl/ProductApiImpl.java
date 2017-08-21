@@ -6,7 +6,7 @@ import com.example.eugenedolgushev.internet_m.Api.BaseApi;
 import com.example.eugenedolgushev.internet_m.Api.ProductApi.ProductApiListener;
 import com.example.eugenedolgushev.internet_m.AsyncTask.OnAsyncTaskCompleted;
 import com.example.eugenedolgushev.internet_m.Model.Product;
-import com.example.eugenedolgushev.internet_m.Parsers.ProductParser;
+import com.example.eugenedolgushev.internet_m.Parsers.Parser;
 import com.loopj.android.http.RequestParams;
 
 import org.json.JSONArray;
@@ -28,7 +28,7 @@ public class ProductApiImpl extends BaseApi {
             @Override
             public void taskCompleted(Object data) {
                 JSONArray productsArray = (JSONArray) data;
-                ArrayList<Product> products = ProductParser.parseProducts(productsArray);
+                ArrayList<Product> products = Parser.parseObjects(productsArray, Product.class);
                 if (products != null) {
                     listener.onProductsLoaded(products);
                 }
