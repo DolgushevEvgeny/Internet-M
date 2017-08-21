@@ -31,8 +31,18 @@ public class BaseApi {
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                 super.onSuccess(statusCode, headers, response);
                 try {
-                    Object data = response.get("data");
-                    asyncListener.taskCompleted(data);
+                    if (response.has("meta")) {
+                        JSONObject meta = response.getJSONObject("meta");
+                        if (meta.has("success")) {
+                            boolean success = meta.getBoolean("success");
+                            if (success) {
+                                if (response.has("data")) {
+                                    Object data = response.get("data");
+                                    asyncListener.taskCompleted(data);
+                                }
+                            }
+                        }
+                    }
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -52,7 +62,22 @@ public class BaseApi {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                 super.onSuccess(statusCode, headers, response);
-                asyncListener.taskCompleted(response);
+                try {
+                    if (response.has("meta")) {
+                        JSONObject meta = response.getJSONObject("meta");
+                        if (meta.has("success")) {
+                            boolean success = meta.getBoolean("success");
+                            if (success) {
+                                if (response.has("data")) {
+                                    Object data = response.get("data");
+                                    asyncListener.taskCompleted(data);
+                                }
+                            }
+                        }
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
             }
 
             @Override
